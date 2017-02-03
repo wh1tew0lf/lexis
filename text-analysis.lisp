@@ -57,3 +57,20 @@
 
 	(loop for (chr . frq) in (sort alist #'> :key #'cdr)
       do (format t "\"~A\" ~,2F%~%" chr (/ (* 100.0 frq) cnt)))))
+
+(defun parse-file(filename &optional (n 2))
+  (let ((frequency (make-hash-table :test 'equal)))
+	(with-open-file (stream filename)
+	  (loop
+		 for line = (read-line stream nil :eof)
+		 until (eq line :eof)
+		 do (get-n-gramm line n frequency)))
+	frequency))
+
+(defun print-hash-table-2 (table)
+  (loop
+	 for k being the hash-keys in table using (hash-value v)
+	 sum v into symbols-sum
+	 count t into symbols-cnt
+     do (format t "~A ~A ~%" k v)
+	 finally (format t "SUM: ~A~&COUNT: ~A~&" symbols-sum symbols-cnt)))
